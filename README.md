@@ -1,2 +1,2 @@
 # pygolify
-Coverts Django models to Go structs
+Transforms Django models into Go structs
