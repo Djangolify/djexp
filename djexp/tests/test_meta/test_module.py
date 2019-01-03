@@ -1,13 +1,13 @@
 from unittest import TestCase
 
-from djexp.meta.module import Module
-from tests.test_meta.demo_module import TestClass, AnotherTestClass
+from djexp.app.meta.module import Module
+from djexp.tests.test_meta.demo_module import TestClass, AnotherTestClass
 
 
 class TestModule(TestCase):
 
 	def setUp(self):
-		self.module = Module('tests.test_meta.demo_module')
+		self.module = Module('djexp.tests.test_meta.demo_module')
 
 	def test_classes(self):
 		actual = self.module.classes
