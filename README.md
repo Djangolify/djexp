@@ -2,7 +2,7 @@
 Transforms Django models into Go structs
 
 ### Installation
-[djexp](djexp) documentation available [here](djexp/README.md), [strugen](strugen) (test app name) - [here](strugen/README.md).
+[djexp](djexp) documentation available [here](djexp/README.md#installation), [strugen](strugen) (test app name) - [here](strugen/README.md#installation).
 
 ### Requirements
 > No dependencies
