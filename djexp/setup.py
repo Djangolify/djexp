@@ -4,7 +4,7 @@
 import io
 import os
 
-from setuptools import find_packages, setup
+from setuptools import setup
 
 NAME = 'djexp'
 DESCRIPTION = 'CLI application which exports Django models to json, xml or yaml files'
@@ -42,7 +42,7 @@ setup(
 	author_email=EMAIL,
 	python_requires=REQUIRES_PYTHON,
 	url=URL,
-	packages=find_packages(exclude=('tests',)),
+	packages=['app'],
 	install_requires=REQUIRED,
 	include_package_data=True,
 	license='GPLv3',
