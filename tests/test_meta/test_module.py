@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from pyexport.meta.module import Module
+from djexp.meta.module import Module
 from tests.test_meta.demo_module import TestClass, AnotherTestClass
 
 
