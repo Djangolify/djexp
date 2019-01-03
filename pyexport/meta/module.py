@@ -12,5 +12,6 @@ class Module(object):
 			return inspect.getmembers(self.__module)
 		return inspect.getmembers(self.__module, predicate)
 
+	@property
 	def classes(self):
 		return self.members(inspect.isclass)
