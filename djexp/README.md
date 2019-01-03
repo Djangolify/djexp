@@ -1,8 +1,12 @@
-# djangolify
-Transforms Django models into Go structs
+# djexp - Django Export
+
+CLI application which exports Django models to json, xml or yaml files.
 
 ### Installation
-[djexp](djexp) documentation available [here](djexp/README.md), [strugen](strugen) (test app name) - [here](strugen/README.md).
+```bash
+# Currently is not deployed
+$ sudo pip install djexp
+```
 
 ### Requirements
 > No dependencies
