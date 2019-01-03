@@ -36,6 +36,9 @@ setup(
 	name=NAME,
 	version=about['__version__'],
 	description=DESCRIPTION,
+	entry_points={
+		'console_scripts': ['djexp = app.djexp:main']
+	},
 	long_description=long_description,
 	long_description_content_type='text/markdown',
 	author=AUTHOR,

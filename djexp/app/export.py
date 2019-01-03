@@ -1,4 +1,4 @@
-from djexp.app.meta.module import Module
+from .meta.module import Module
 
 
 def save_dict(data: dict):
