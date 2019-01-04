@@ -1,6 +1,8 @@
 import sys
 import inspect
 
+from .cls import Class
+
 
 class Module(object):
 
@@ -15,3 +17,14 @@ class Module(object):
 	@property
 	def classes(self):
 		return self.members(inspect.isclass)
+
+	@property
+	def dictionary(self):
+		classes = [Class(cls) for cls in self.classes]
+
+		# TODO: remove classes that are not Django's Model child
+
+		return {
+			'name': self.__module.__name__,
+			'classes': [cls.dictionary for cls in classes]
+		}

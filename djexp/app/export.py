@@ -1,7 +1,8 @@
-from re import sub
+from re import sub, search
 from json import dump
 from os import path, makedirs, listdir
 
+from .meta.cls import Class
 from .meta.module import Module
 
 OUTPUT_FILE = 'django-models.json'
@@ -24,6 +25,10 @@ def save_dict(data: dict, root_path: str):
 		dump(data, f, ensure_ascii=False)
 
 
+def path_id_valid(str_path: str):
+	return path.isfile(str_path) and not search('__.+__.py', str_path) and str_path.endswith('.py')
+
+
 def get_modules(root: str):
 	modules = []
 	root = normalize_root(root)
@@ -31,16 +36,39 @@ def get_modules(root: str):
 		return modules
 	for f in listdir(root):
 		new_path = path.join(root, f)
-		if path.isfile(new_path):
+		if path_id_valid(new_path):
 			modules.append(path_to_module(new_path))
 		elif '__pycache__' not in new_path:
 			modules += get_modules(new_path)
 	return modules
 
 
-def compose_module_data(module: Module):
-	pass
+def prepare_modules(module_names: []):
+	root_dir_name = 'djexp'    # TODO: find actual root dir name
+
+	return [Module('{}.{}'.format(root_dir_name, x)) for x in module_names]
 
 
-def compose_output_data(modules: []):
-	pass
+def compose_output_data(root_dir: str, modules: []):
+	return {
+		'root': root_dir,
+		'count': len(modules),
+		'modules': [
+			module.dictionary for module in modules
+		]
+	}
+
+
+def export(root_dir: str):
+	try:
+		modules = prepare_modules(get_modules(root_dir))
+	except Exception as exc:
+		raise Exception('Error occurred while getting modules\' information: {}'.format(exc))
+	try:
+		out_data = compose_output_data(root_dir, modules)
+	except Exception as exc:
+		raise Exception('Error occurred while composing output data: {}'.format(exc))
+	try:
+		save_dict(out_data, root_dir)
+	except Exception as exc:
+		raise Exception('Error occurred while json data: {}'.format(exc))

@@ -18,9 +18,16 @@ class Class(object):
 
 	@property
 	def static_fields(self):
-		res = {}
+		res = []
 		for x in inspect.getmembers(self.__cls):
 			attr = getattr(self.__cls, x[0])
 			if not x[0].startswith('__') and not callable(attr) and not isinstance(attr, property):
-				res[x[0]] = {'value': x[1], 'type': type(attr).__name__}
+				res.append({'name': x[0], 'value': x[1], 'type': type(attr).__name__})
 		return res
+
+	@property
+	def dictionary(self):
+		return {
+			'name': self.name,
+			'fields': self.static_fields
+		}

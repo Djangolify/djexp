@@ -18,21 +18,25 @@ class TestCls(TestCase):
 
 	def test_static_fields(self):
 		actual = self.cls.static_fields
-		expected = {
-			'FLOAT_FIELD': {
+		expected = [
+			{
+				'name': 'FLOAT_FIELD',
 				'value': 10000000000.100000000000000001,
 				'type': 'float'
 			},
-			'INT_STATIC_FIELD': {
+			{
+				'name': 'INT_STATIC_FIELD',
 				'value': 1000000000000000000000000000000000000,
 				'type': 'int'
 			},
-			'STR_STATIC': {
+			{
+				'name': 'STR_STATIC',
 				'value': 'this is string static field',
 				'type': 'str'
 			}
-		}
-		self.assertEqual(isinstance(actual, dict), isinstance(expected, dict))
-		for key, value in expected.items():
-			self.assertEqual(actual[key]['value'], value['value'])
-			self.assertEqual(actual[key]['type'], value['type'])
+		]
+		self.assertEqual(isinstance(actual, list), isinstance(expected, list))
+		for i in range(len(expected)):
+			self.assertEqual(actual[i]['name'], expected[i]['name'])
+			self.assertEqual(actual[i]['value'], expected[i]['value'])
+			self.assertEqual(actual[i]['type'], expected[i]['type'])
