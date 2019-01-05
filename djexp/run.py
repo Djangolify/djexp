@@ -1,4 +1,4 @@
-from djexp.app.djexp import main
+from djexp import main
 
 
 if __name__ == '__main__':

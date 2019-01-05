@@ -1,7 +1,7 @@
 from unittest import TestCase
 
-from djexp.app.meta.cls import Class
-from djexp.tests.test_meta.demo_module import TestClass, AnotherTestClass
+from djexpapp.meta.cls import Class
+from tests.test_meta.demo_module import TestClass, AnotherTestClass
 
 
 class TestCls(TestCase):

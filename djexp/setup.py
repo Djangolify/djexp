@@ -7,19 +7,19 @@ import os
 from setuptools import setup, find_packages
 
 NAME = 'djexp'
-DESCRIPTION = 'CLI application which exports Django models to json, xml or yaml files'
+DESCRIPTION = 'CLI application which exports Django models to json'
 URL = 'https://github.com/YuriyLisovskiy/djangolify/tree/master/djexp'
 EMAIL = 'yuralisovskiy98@gmail.com'
 AUTHOR = 'Yuriy Lisovskiy'
 REQUIRES_PYTHON = '>=3.6.0'
-VERSION = '0.0.3'
+VERSION = '0.0.1'
 
-REQUIRED = []
+REQUIRED = ['django']
 
 here = os.path.abspath(os.path.dirname(__file__))
 
 try:
-	with io.open(os.path.join(here, 'README.md'), encoding='utf-8') as f:
+	with io.open(os.path.join(here, 'README.md')) as f:
 		long_description = '\n' + f.read()
 except FileNotFoundError:
 	long_description = DESCRIPTION
