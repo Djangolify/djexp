@@ -4,7 +4,6 @@ CLI application which exports Django models to json, xml or yaml files.
 
 ### Installation
 ```bash
-# Currently is not deployed
 $ sudo pip install djexp
 ```
 

@@ -1,13 +1,17 @@
-import sys
 import inspect
+from importlib import util
+
+from django.db.models import Model
 
 from .cls import Class
 
 
 class Module(object):
 
-	def __init__(self, m_name: str):
-		self.__module = sys.modules[m_name]
+	def __init__(self, m_name: str, m_path: str):
+		spec = util.spec_from_file_location(m_name, m_path)
+		self.__module = util.module_from_spec(spec)
+		spec.loader.exec_module(self.__module)
 
 	def members(self, predicate=None):
 		if predicate is None:
@@ -20,11 +24,9 @@ class Module(object):
 
 	@property
 	def dictionary(self):
-		classes = [Class(cls) for cls in self.classes]
-
-		# TODO: remove classes that are not Django's Model child
-
+		classes = [Class(cls[1]) for cls in self.classes]
+		final_classes = [cls for cls in classes if Model in cls.bases]
 		return {
 			'name': self.__module.__name__,
-			'classes': [cls.dictionary for cls in classes]
+			'classes': [cls.dictionary for cls in final_classes]
 		}

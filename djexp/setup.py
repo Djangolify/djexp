@@ -4,7 +4,7 @@
 import io
 import os
 
-from setuptools import setup
+from setuptools import setup, find_packages
 
 NAME = 'djexp'
 DESCRIPTION = 'CLI application which exports Django models to json, xml or yaml files'
@@ -12,7 +12,7 @@ URL = 'https://github.com/YuriyLisovskiy/djangolify/tree/master/djexp'
 EMAIL = 'yuralisovskiy98@gmail.com'
 AUTHOR = 'Yuriy Lisovskiy'
 REQUIRES_PYTHON = '>=3.6.0'
-VERSION = '0.0.1'
+VERSION = '0.0.3'
 
 REQUIRED = []
 
@@ -24,13 +24,9 @@ try:
 except FileNotFoundError:
 	long_description = DESCRIPTION
 
-about = {}
-if not VERSION:
-	with open(os.path.join(here, NAME, '__version__.py')) as f:
-		exec(f.read(), about)
-else:
-	about['__version__'] = VERSION
-
+about = {
+	'__version__': VERSION
+}
 
 setup(
 	name=NAME,
@@ -45,7 +41,7 @@ setup(
 	author_email=EMAIL,
 	python_requires=REQUIRES_PYTHON,
 	url=URL,
-	packages=['app'],
+	packages=find_packages(exclude=('tests',)),
 	install_requires=REQUIRED,
 	include_package_data=True,
 	license='GPLv3',
