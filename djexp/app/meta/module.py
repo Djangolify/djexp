@@ -20,13 +20,12 @@ class Module(object):
 
 	@property
 	def classes(self):
-		return self.members(inspect.isclass)
+		classes = [Class(cls[1]) for cls in self.members(inspect.isclass)]
+		return [cls for cls in classes if Model in cls.bases]
 
 	@property
 	def dictionary(self):
-		classes = [Class(cls[1]) for cls in self.classes]
-		final_classes = [cls for cls in classes if Model in cls.bases]
 		return {
 			'name': self.__module.__name__,
-			'classes': [cls.dictionary for cls in final_classes]
+			'classes': [cls.dictionary for cls in self.classes]
 		}

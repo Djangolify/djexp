@@ -38,7 +38,8 @@ def get_modules(root: str):
 		new_path = path.join(root, f)
 		if is_valid_module(new_path):
 			modules.append((path_to_module(new_path), new_path))
-		elif '__pycache__' not in new_path:
+		elif path.isdir(
+				new_path) and '__pycache__' not in new_path and 'venv' not in new_path and 'migrations' not in new_path:
 			modules += get_modules(new_path)
 	return modules
 
@@ -55,12 +56,11 @@ def prepare_modules(module_names: []):
 
 
 def compose_output_data(root_dir: str, modules: []):
+	final_modules = [module.dictionary for module in modules if len(module.classes) > 0]
 	return {
 		'root': root_dir,
-		'count': len(modules),
-		'modules': [
-			module.dictionary for module in modules
-		]
+		'count': len(final_modules),
+		'modules': final_modules
 	}
 
 
