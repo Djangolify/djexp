@@ -13,6 +13,8 @@ class Module(object):
 		self.__module = util.module_from_spec(spec)
 		spec.loader.exec_module(self.__module)
 
+		print('Module: <name: {}>, <path: {}>'.format(m_name, m_path))
+
 	def members(self, predicate=None):
 		if predicate is None:
 			return inspect.getmembers(self.__module)

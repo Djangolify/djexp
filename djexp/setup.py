@@ -33,7 +33,7 @@ setup(
 	version=about['__version__'],
 	description=DESCRIPTION,
 	entry_points={
-		'console_scripts': ['djexp = app.djexp:main']
+		'console_scripts': ['djexp = djexpapp.djexp:main']
 	},
 	long_description=long_description,
 	long_description_content_type='text/markdown',
