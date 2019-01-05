@@ -1,6 +1,7 @@
+import sys
 from json import dump
 from re import sub, search
-from os import path, makedirs, listdir, getcwd
+from os import path, makedirs, listdir, getcwd, environ
 
 from .meta.module import Module
 
@@ -37,6 +38,9 @@ def get_modules(root: str):
 	for f in listdir(root):
 		new_path = path.join(root, f)
 		if is_valid_module(new_path):
+
+			print('{}, {}'.format(path_to_module(new_path), new_path))
+
 			modules.append((path_to_module(new_path), new_path))
 		elif path.isdir(
 				new_path) and '__pycache__' not in new_path and 'venv' not in new_path and 'migrations' not in new_path:
@@ -64,7 +68,9 @@ def compose_output_data(root_dir: str, modules: []):
 	}
 
 
-def export(root_dir: str):
+def export(root_dir: str, django_settings_file: str = None):
+	# environ.setdefault('DJANGO_SETTINGS_MODULE', django_settings_file)
+	sys.path.append(root_dir)
 	try:
 		modules = prepare_modules(get_modules(root_dir))
 	except Exception as exc:
