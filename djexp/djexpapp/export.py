@@ -68,8 +68,7 @@ def compose_output_data(root_dir: str, modules: []):
 	}
 
 
-def export(root_dir: str, django_settings_file: str = None):
-	# environ.setdefault('DJANGO_SETTINGS_MODULE', django_settings_file)
+def export(root_dir: str):
 	sys.path.append(root_dir)
 	try:
 		modules = prepare_modules(get_modules(root_dir))
