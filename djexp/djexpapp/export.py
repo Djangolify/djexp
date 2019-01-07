@@ -30,8 +30,10 @@ def save_dict(data: dict, root_path: str):
 	root_path = normalize_root(root_path)
 	if not path.exists(root_path):
 		makedirs(root_path)
-	with open('{}/{}'.format(root_path, OUTPUT_FILE), 'w') as f:
+	target_path = '{}/{}'.format(root_path, OUTPUT_FILE)
+	with open(target_path, 'w') as f:
 		dump(data, f, ensure_ascii=False, indent=2, sort_keys=True)
+		return target_path
 
 
 def is_valid_module(str_path: str):
@@ -62,11 +64,11 @@ def prepare_modules(module_names: [], settings_module: str):
 
 def compose_output_data(root_dir: str, modules: []):
 	final_modules = [module.dictionary for module in modules if len(module.classes) > 0]
-	return {
+	return ({
 		'root': root_dir,
 		'count': len(final_modules),
 		'modules': final_modules
-	}
+	}, len(final_modules))
 
 
 def export(root_dir: str, settings_module: str):
@@ -76,11 +78,12 @@ def export(root_dir: str, settings_module: str):
 	except Exception as exc:
 		raise Exception('Error occurred while getting modules\' information: {}'.format(exc))
 	try:
-		out_data = compose_output_data(path.abspath(root_dir), modules)
+		out_data, classes_count = compose_output_data(path.abspath(root_dir), modules)
 	except Exception as exc:
 		print(exc)
 		raise Exception('Error occurred while composing output data: {}'.format(exc))
 	try:
-		save_dict(out_data, getcwd())
+		saved_path = save_dict(out_data, getcwd())
 	except Exception as exc:
 		raise Exception('Error occurred while json data: {}'.format(exc))
+	print('Exported {} classes, check out \'{}\' file.'.format(classes_count, saved_path))

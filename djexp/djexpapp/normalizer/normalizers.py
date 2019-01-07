@@ -12,6 +12,8 @@ from .django_types import (
 	FLOAT64_TYPES
 )
 
+from django.db import models
+
 
 def normalize_root(root: str):
 	root = sub(r'[^\w.]{2,}', '/', root)
@@ -37,4 +39,15 @@ def normalize_type(data_type):
 		return 'uint32'
 	if data_type.__name__ in FLOAT64_TYPES:
 		return 'float64'
+	return None
+
+
+def normalize_relations(field):
+	field_type = type(field)
+	if field_type is models.ForeignKey:
+		return 'ForeignKey({})'.format(field.remote_field.model.__name__)
+	if field_type is models.ManyToManyField:
+		return 'ManyToManyField({})'.format(field.remote_field.model.__name__)
+	if field_type is models.OneToOneField:
+		return 'OneToOneField({})'.format(field.remote_field.model.__name__)
 	return None

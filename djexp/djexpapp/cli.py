@@ -53,7 +53,6 @@ def cli_exec():
 			print('Exporting...')
 			args = parse_args(sys.argv)
 			export(args['root'], args['settings'])
-			print('Done.')
 		except ValueError as val_err:
 			print('{}: {}, try \'-h\' for help'.format(NAME, val_err))
 		except Exception as exc:

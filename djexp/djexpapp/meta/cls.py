@@ -1,6 +1,6 @@
 import inspect
 
-from ..normalizer.normalizers import normalize_type
+from ..normalizer.normalizers import normalize_type, normalize_relations
 
 
 class Class(object):
@@ -23,16 +23,12 @@ class Class(object):
 		res = []
 		for field in self.__cls._meta.fields:
 			normalized_type = normalize_type(type(field))
-			if normalized_type is not None:
-				res.append({'name': str(field).split('.')[-1], 'type': normalized_type})
+			if normalized_type is None:
+				normalized_type = normalize_relations(field)
+				if normalized_type is None:
+					continue
+			res.append({'unique': field.unique, 'name': str(field).split('.')[-1], 'type': normalized_type})
 		return res
-
-	@staticmethod
-	def __is_user_defined_field(field, attr):
-		return not field.startswith('__') and \
-				not field.startswith('_') and \
-				not callable(attr) and \
-				not isinstance(attr, property)
 
 	@property
 	def dictionary(self):
