@@ -12,6 +12,7 @@ from .django_types import (
 	FLOAT64_TYPES
 )
 
+import django
 from django.db import models
 
 
@@ -42,12 +43,19 @@ def normalize_type(data_type):
 	return None
 
 
+def get_rel_model(field):
+	if django.__version__ < '2.0':
+		return field.rel.to
+	else:
+		return field.remote_field.model
+
+
 def normalize_relations(field):
 	field_type = type(field)
 	if field_type is models.ForeignKey:
-		return 'ForeignKey({})'.format(field.remote_field.model.__name__)
+		return 'ForeignKey({})'.format(get_rel_model(field).__name__)
 	if field_type is models.ManyToManyField:
-		return 'ManyToManyField({})'.format(field.remote_field.model.__name__)
+		return 'ManyToManyField({})'.format(get_rel_model(field).__name__)
 	if field_type is models.OneToOneField:
-		return 'OneToOneField({})'.format(field.remote_field.model.__name__)
+		return 'OneToOneField({})'.format(get_rel_model(field).__name__)
 	return None
