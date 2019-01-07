@@ -8,7 +8,8 @@ $ pip install djexp
 ```
 
 ### Requirements
-- Django >= 2.1.5 (not sure if it works on earlier versions)
+- Django >= 2.0
+> I am not sure if it works with earlier Django versions
 
 ### Example
 ##### Using as cli application:
