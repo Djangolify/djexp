@@ -3,8 +3,8 @@ import sys
 from .export import export
 
 NAME = 'djexp'
-VERSION = '0.1.0'
-DESCRIPTION = 'CLI application which exports Django models to json.'
+VERSION = '0.0.1-alpha'
+DESCRIPTION = 'Python3 application which exports Django models to json or yaml.'
 
 
 def parse_args(argv):

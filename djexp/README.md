@@ -4,6 +4,7 @@ Python3 application which exports Django models to json or yaml.
 
 ### Installation
 ```bash
+# currently is not deployed to PyPi
 $ pip install djexp
 ```
 
