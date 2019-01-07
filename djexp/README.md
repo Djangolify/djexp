@@ -1,6 +1,7 @@
 # djexp - Django Export
 
 Python3 application which exports Django models to json or yaml.
+> Use this module on your own risk because of non-stable version.
 
 ### Installation
 ```bash
