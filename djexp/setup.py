@@ -14,7 +14,7 @@ AUTHOR = 'Yuriy Lisovskiy'
 REQUIRES_PYTHON = '>=3.6.0'
 VERSION = '0.0.1'
 
-REQUIRED = ['django']
+REQUIRED = ['django', 'PyYAML==3.13']
 
 here = os.path.abspath(os.path.dirname(__file__))
 

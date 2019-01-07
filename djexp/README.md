@@ -8,8 +8,9 @@ $ pip install djexp
 ```
 
 ### Requirements
-- Django >= 2.0
+- Django>=2.1.5
 > I am not sure if it works with earlier Django versions
+- PyYAML==3.13
 
 ### Example
 ##### Using as cli application:
@@ -47,10 +48,10 @@ class Command(BaseCommand):
 
     def handle(self, **options):
         export_django_models(
-			root=BASE_DIR,
-			settings_module='ProjectName.settings',
-			file_format='yml'
-		)
+            root=BASE_DIR,
+            settings_module='ProjectName.settings',
+            file_format='yml'
+        )
 ```
 
 Run created management command:
