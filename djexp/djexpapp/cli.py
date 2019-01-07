@@ -8,7 +8,7 @@ DESCRIPTION = 'CLI application which exports Django models to json.'
 
 
 def parse_args(argv):
-	if len(argv) != 5:
+	if len(argv) > 6:
 		raise ValueError('too many arguments were specified')
 	try:
 		root_idx = argv.index('-r')
@@ -18,9 +18,20 @@ def parse_args(argv):
 		settings_idx = argv.index('-s')
 	except ValueError as _:
 		raise ValueError('settings module is required')
+	try:
+		argv.index('--yml')
+		file_format = 'yml'
+	except ValueError as _:
+		try:
+			argv.index('--json')
+		except ValueError as _:
+			if len(argv) > 5:
+				print('Warning: unsupported file format, serializing to json by default')
+		file_format = 'json'
 	return {
 		'root': argv[root_idx + 1],
-		'settings': argv[settings_idx + 1]
+		'settings': argv[settings_idx + 1],
+		'file_format': file_format.strip('-')
 	}
 
 
@@ -52,7 +63,7 @@ def cli_exec():
 		try:
 			print('Exporting...')
 			args = parse_args(sys.argv)
-			export(args['root'], args['settings'])
+			export(args['root'], args['settings'], args['file_format'])
 		except ValueError as val_err:
 			print('{}: {}, try \'-h\' for help'.format(NAME, val_err))
 		except Exception as exc:

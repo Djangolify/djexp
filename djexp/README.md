@@ -46,7 +46,11 @@ from django.core.management.base import BaseCommand
 class Command(BaseCommand):
 
     def handle(self, **options):
-        export_django_models(BASE_DIR, 'ProjectName.settings')
+        export_django_models(
+			root=BASE_DIR,
+			settings_module='ProjectName.settings',
+			file_format='yml'
+		)
 ```
 
 Run created management command:

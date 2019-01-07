@@ -1,12 +1,14 @@
 import sys
-from json import dump
+import json
 from re import sub, search
 from os import path, makedirs, listdir, getcwd
 
 from .meta.module import Module
 from djexpapp.normalizer.normalizers import normalize_root
 
-OUTPUT_FILE = 'django-models.json'
+import yaml
+
+OUTPUT_FILE = 'django-models'
 
 
 def dir_is_omitted(path_str: str):
@@ -26,14 +28,31 @@ def path_to_module(path_str: str):
 	return sub(r'[^\w]+', '.', path_str).lstrip('/.')
 
 
-def save_dict(data: dict, root_path: str):
+def save_json(data: dict, target_path: str):
+	target_path = '{}.json'.format(target_path)
+	with open(target_path, 'w') as f:
+		json.dump(data, f, ensure_ascii=False, indent=2, sort_keys=True)
+		return target_path
+
+
+def save_yaml(data: dict, target_path: str):
+	target_path = '{}.yml'.format(target_path)
+	with open(target_path, 'w') as f:
+		yaml.dump(data, f)
+		return target_path
+
+
+def save_dict(data: dict, root_path: str, file_format: str):
 	root_path = normalize_root(root_path)
 	if not path.exists(root_path):
 		makedirs(root_path)
 	target_path = '{}/{}'.format(root_path, OUTPUT_FILE)
-	with open(target_path, 'w') as f:
-		dump(data, f, ensure_ascii=False, indent=2, sort_keys=True)
-		return target_path
+	if file_format is 'json':
+		return save_json(data, target_path)
+	elif file_format is 'yml':
+		return save_yaml(data, target_path)
+	else:
+		raise ValueError('invalid serialization file type')
 
 
 def is_valid_module(str_path: str):
@@ -71,7 +90,7 @@ def compose_output_data(root_dir: str, modules: []):
 	}, len(final_modules))
 
 
-def export(root_dir: str, settings_module: str):
+def export(root_dir: str, settings_module: str, file_format: str = 'json'):
 	sys.path.append(root_dir)
 	try:
 		modules = prepare_modules(get_modules(root_dir), settings_module)
@@ -83,7 +102,7 @@ def export(root_dir: str, settings_module: str):
 		print(exc)
 		raise Exception('Error occurred while composing output data: {}'.format(exc))
 	try:
-		saved_path = save_dict(out_data, getcwd())
+		saved_path = save_dict(out_data, getcwd(), file_format)
 	except Exception as exc:
 		raise Exception('Error occurred while json data: {}'.format(exc))
 	print('Exported {} classes, check out \'{}\' file.'.format(classes_count, saved_path))
