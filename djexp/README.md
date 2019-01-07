@@ -8,19 +8,49 @@ $ pip install djexp
 ```
 
 ### Requirements
-- Django
+- Django >= 2.1.5 (not sure if it works on earlier versions)
 
 ### Example
-Terminal:
+##### Using as cli application:
 ```bash
 $ djexp -r ./ -s ProjectName.settings
 ```
 
-Code:
+##### Using in Django project
+Example structure:
+```
+ProjectName/
+    ...
+    manage.py
+    core/
+        __init__.py
+        ...
+        models.py
+        management/
+            __init__.py
+            commands/
+                __init__.py
+                export_models.py
+        views.py
+        ...
+    ...
+```
+Implement command, `export_models.py`:
 ```python
+from ProjectName.settings import BASE_DIR
 from djexpapp.task import export_django_models
+from django.core.management.base import BaseCommand
 
-export_django_models('root/directory', 'ProjectName.settings')
+
+class Command(BaseCommand):
+
+    def handle(self, **options):
+        export_django_models(BASE_DIR, 'ProjectName.settings')
+```
+
+Run created management command:
+```bash
+$ python manage.py export_models
 ```
 
 ### Author
