@@ -4,7 +4,7 @@ CLI application which exports Django models to json.
 
 ### Installation
 ```bash
-$ sudo pip install djexp
+$ pip install djexp
 ```
 
 ### Requirements
@@ -13,14 +13,14 @@ $ sudo pip install djexp
 ### Example
 Terminal:
 ```bash
-$ djexp ./
+$ djexp -r ./ -s ProjectName.settings
 ```
 
 Code:
 ```python
 from djexpapp.task import export_django_models
 
-export_django_models('root/directory')
+export_django_models('root/directory', 'ProjectName.settings')
 ```
 
 ### Author
