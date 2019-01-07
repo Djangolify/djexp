@@ -4,13 +4,20 @@ from re import sub, search
 from os import path, makedirs, listdir, getcwd
 
 from .meta.module import Module
+from djexpapp.normalizer.normalizers import normalize_root
 
 OUTPUT_FILE = 'django-models.json'
 
 
-def normalize_root(root: str):
-	root = sub(r'[^\w.]{2,}', '/', root)
-	return root.rstrip('/')
+def dir_is_omitted(path_str: str):
+	for item in ['__pycache__', 'venv', 'migrations']:
+		if item in path_str:
+			return True
+	return False
+
+
+def file_id_omitted(file_path: str):
+	return not search('__.+__.py', file_path) and file_path.endswith('.py') and 'setup.py' not in file_path
 
 
 def path_to_module(path_str: str):
@@ -28,8 +35,7 @@ def save_dict(data: dict, root_path: str):
 
 
 def is_valid_module(str_path: str):
-	return path.isfile(str_path) and not search('__.+__.py', str_path) and str_path.endswith(
-		'.py') and 'setup.py' not in str_path
+	return path.isfile(str_path) and file_id_omitted(str_path)
 
 
 def get_modules(root: str):
@@ -38,12 +44,8 @@ def get_modules(root: str):
 	for f in listdir(root):
 		new_path = path.join(root, f)
 		if is_valid_module(new_path):
-
-			# print('{}, {}'.format(path_to_module(new_path), new_path))
-
 			modules.append((path_to_module(new_path), new_path))
-		elif path.isdir(
-				new_path) and '__pycache__' not in new_path and 'venv' not in new_path and 'migrations' not in new_path:
+		elif path.isdir(new_path) and not dir_is_omitted(new_path):
 			modules += get_modules(new_path)
 	return modules
 
@@ -60,7 +62,6 @@ def prepare_modules(module_names: [], settings_module: str):
 
 def compose_output_data(root_dir: str, modules: []):
 	final_modules = [module.dictionary for module in modules if len(module.classes) > 0]
-	print(final_modules[0])
 	return {
 		'root': root_dir,
 		'count': len(final_modules),
@@ -77,9 +78,9 @@ def export(root_dir: str, settings_module: str):
 	try:
 		out_data = compose_output_data(path.abspath(root_dir), modules)
 	except Exception as exc:
+		print(exc)
 		raise Exception('Error occurred while composing output data: {}'.format(exc))
 	try:
-		# print(out_data)
 		save_dict(out_data, getcwd())
 	except Exception as exc:
 		raise Exception('Error occurred while json data: {}'.format(exc))

@@ -1,5 +1,7 @@
 import inspect
 
+from ..normalizer.normalizers import normalize_type
+
 
 class Class(object):
 
@@ -19,10 +21,10 @@ class Class(object):
 	@property
 	def static_fields(self):
 		res = []
-		for x in inspect.getmembers(self.__cls):
-			attr = getattr(self.__cls, x[0])
-			if self.__is_user_defined_field(x[0], attr):
-				res.append({'name': x[0], 'value': x[1], 'type': type(attr).__name__})
+		for field in self.__cls._meta.fields:
+			normalized_type = normalize_type(type(field))
+			if normalized_type is not None:
+				res.append({'name': str(field).split('.')[-1], 'type': normalized_type})
 		return res
 
 	@staticmethod

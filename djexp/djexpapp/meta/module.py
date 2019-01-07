@@ -22,10 +22,7 @@ class Module(object):
 
 	@property
 	def classes(self):
-		classes = []
-		for cls in self.members(inspect.isclass):
-			if cls[1].__module__ == self.__module.__name__:
-				classes.append(Class(cls[1]))
+		classes = [Class(cls[1]) for cls in self.members(inspect.isclass) if cls[1].__module__ == self.__module.__name__]
 		return [cls for cls in classes if Model in cls.bases]
 
 	@property

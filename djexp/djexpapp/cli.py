@@ -55,7 +55,7 @@ def cli_exec():
 			export(args['root'], args['settings'])
 			print('Done.')
 		except ValueError as val_err:
-			print('{}: {}, try \'-h\' for help'.format(NAME, val_err.args[0]))
+			print('{}: {}, try \'-h\' for help'.format(NAME, val_err))
 		except Exception as exc:
 			print('An error occurred while exporting: {}'.format(exc))
 		return
