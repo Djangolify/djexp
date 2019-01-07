@@ -7,14 +7,14 @@ import os
 from setuptools import setup, find_packages
 
 NAME = 'djexp'
-DESCRIPTION = 'CLI application which exports Django models to json'
+DESCRIPTION = 'Python3 application which exports Django models to json'
 URL = 'https://github.com/YuriyLisovskiy/djangolify/tree/master/djexp'
 EMAIL = 'yuralisovskiy98@gmail.com'
 AUTHOR = 'Yuriy Lisovskiy'
 REQUIRES_PYTHON = '>=3.6.0'
-VERSION = '0.0.1'
+VERSION = '0.1.0'
 
-REQUIRED = ['django', 'PyYAML==3.13']
+REQUIRED = ['Django>=2.1.5', 'PyYAML==3.13']
 
 here = os.path.abspath(os.path.dirname(__file__))
 
