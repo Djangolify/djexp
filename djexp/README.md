@@ -1,6 +1,6 @@
 # djexp - Django Export
 
-CLI application which exports Django models to json.
+Python application which exports Django models to json or yaml.
 
 ### Installation
 ```bash
@@ -9,13 +9,13 @@ $ pip install djexp
 
 ### Requirements
 - Django>=2.1.5
-> I am not sure if it works with earlier Django versions
+> I am not sure if it works with earlier Django versions.
 - PyYAML==3.13
 
 ### Example
 ##### Using as cli application:
 ```bash
-$ djexp -r ./ -s ProjectName.settings
+$ djexp -r ./ -s ProjectName.settings --json
 ```
 
 ##### Using in Django project
