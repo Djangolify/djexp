@@ -6,9 +6,11 @@ from ..normalizer.normalizers import normalize_type, normalize_relations
 class Class(object):
 
 	def __init__(self, cls: object):
+		# TODO: also check if class is child of django.db.models.Model
 		if not inspect.isclass(cls):
 			raise ValueError('object \'{}\' is not a class'.format(cls))
 		self.__cls = cls
+		self.__fields_got = False
 		self.__static_fields = []
 
 	@property
@@ -21,7 +23,7 @@ class Class(object):
 
 	@property
 	def static_fields(self):
-		if len(self.__static_fields) < 1:
+		if not self.__fields_got:
 			for field in self.__cls._meta.fields:
 				normalized_type = normalize_type(type(field))
 				if normalized_type is None:
