@@ -96,13 +96,16 @@ def export(root_dir: str, settings_module: str, file_format: str = 'json'):
 		modules = prepare_modules(get_modules(root_dir), settings_module)
 	except Exception as exc:
 		raise Exception('Error occurred while getting modules\' information: {}'.format(exc))
-	try:
-		out_data, classes_count = compose_output_data(path.abspath(root_dir), modules)
-	except Exception as exc:
-		print(exc)
-		raise Exception('Error occurred while composing output data: {}'.format(exc))
-	try:
-		saved_path = save_dict(out_data, getcwd(), file_format)
-	except Exception as exc:
-		raise Exception('Error occurred while json data: {}'.format(exc))
-	print('Exported {} classes, check out \'{}\' file.'.format(classes_count, saved_path))
+	if len(modules) > 0:
+		try:
+			out_data, classes_count = compose_output_data(path.abspath(root_dir), modules)
+		except Exception as exc:
+			print(exc)
+			raise Exception('Error occurred while composing output data: {}'.format(exc))
+		try:
+			saved_path = save_dict(out_data, getcwd(), file_format)
+		except Exception as exc:
+			raise Exception('Error occurred while json data: {}'.format(exc))
+		print('Exported {} classes, check out \'{}\' file.'.format(classes_count, saved_path))
+	else:
+		print('Nothing to export.')
