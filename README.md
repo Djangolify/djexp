@@ -1,15 +1,64 @@
-# djangolify
-Transforms Django models into Go structs
+# djexp - Django Export
+
+Python3 application which exports Django models to json or yaml.
+> Use this module on your own risk because of non-stable version.
 
 ### Installation
-[djexp](djexp) documentation available [here](djexp/README.md#installation), [strugen](strugen) (test app name) - [here](strugen/README.md#installation).
+```bash
+# currently is not deployed to PyPi
+$ pip install djexp
+```
 
 ### Requirements
-> No dependencies
+- Django>=2.1.5
+> I am not sure if it works with earlier Django versions.
+- PyYAML==3.13
 
 ### Example
+##### Using as cli application:
 ```bash
-# TODO
+$ djexp -r ./ -s ProjectName.settings --json
+```
+
+##### Using in Django project
+Example structure:
+```
+ProjectName/
+    ...
+    manage.py
+    core/
+        __init__.py
+        ...
+        models.py
+        management/
+            __init__.py
+            commands/
+                __init__.py
+                export_models.py
+        views.py
+        ...
+    ...
+```
+Implement command, `export_models.py`:
+```python
+from ProjectName.settings import BASE_DIR
+from djexp.task import export_django_models
+from django.core.management.base import BaseCommand
+
+
+class Command(BaseCommand):
+
+    def handle(self, **options):
+        export_django_models(
+            root=BASE_DIR,
+            settings_module='ProjectName.settings',
+            file_format='yml'
+        )
+```
+
+Run created management command:
+```bash
+$ python manage.py export_models
 ```
 
 ### Author

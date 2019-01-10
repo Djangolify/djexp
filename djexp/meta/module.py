@@ -14,6 +14,8 @@ class Module(object):
 		environ.setdefault('DJANGO_SETTINGS_MODULE', settings_module)
 		django.setup()
 		self.__module = import_module(m_name)
+		classes = [Class(cls[1]) for cls in self.members(inspect.isclass) if cls[1].__module__ == self.__module.__name__]
+		self.__classes = [cls for cls in classes if Model in cls.bases]
 
 	def members(self, predicate=None):
 		if predicate is None:
@@ -22,8 +24,7 @@ class Module(object):
 
 	@property
 	def classes(self):
-		classes = [Class(cls[1]) for cls in self.members(inspect.isclass) if cls[1].__module__ == self.__module.__name__]
-		return [cls for cls in classes if Model in cls.bases]
+		return self.__classes
 
 	@property
 	def dictionary(self):

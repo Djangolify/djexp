@@ -9,6 +9,7 @@ class Class(object):
 		if not inspect.isclass(cls):
 			raise ValueError('object \'{}\' is not a class'.format(cls))
 		self.__cls = cls
+		self.__static_fields = []
 
 	@property
 	def name(self):
@@ -20,15 +21,19 @@ class Class(object):
 
 	@property
 	def static_fields(self):
-		res = []
-		for field in self.__cls._meta.fields:
-			normalized_type = normalize_type(type(field))
-			if normalized_type is None:
-				normalized_type = normalize_relations(field)
+		if len(self.__static_fields) < 1:
+			for field in self.__cls._meta.fields:
+				normalized_type = normalize_type(type(field))
 				if normalized_type is None:
-					continue
-			res.append({'unique': field.unique, 'name': str(field).split('.')[-1], 'type': normalized_type})
-		return res
+					normalized_type = normalize_relations(field)
+					if normalized_type is None:
+						continue
+				self.__static_fields.append({
+					'unique': field.unique,
+					'type': normalized_type,
+					'name': str(field).split('.')[-1]
+				})
+		return self.__static_fields
 
 	@property
 	def dictionary(self):

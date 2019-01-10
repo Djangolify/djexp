@@ -8,7 +8,7 @@ from setuptools import setup, find_packages
 
 NAME = 'djexp'
 DESCRIPTION = 'Python3 application which exports Django models to json or yaml'
-URL = 'https://github.com/YuriyLisovskiy/djangolify/tree/master/djexp'
+URL = 'https://github.com/Djangolify/djexp'
 EMAIL = 'yuralisovskiy98@gmail.com'
 AUTHOR = 'Yuriy Lisovskiy'
 REQUIRES_PYTHON = '>=3.6.0'
@@ -16,24 +16,18 @@ VERSION = '0.0.1-alpha'
 
 REQUIRED = ['Django>=2.1.5', 'pyyaml>=4.2b4']
 
-here = os.path.abspath(os.path.dirname(__file__))
-
 try:
-	with io.open(os.path.join(here, 'README.md')) as f:
+	with io.open(os.path.join(os.path.abspath(os.path.dirname(__file__)), 'README.md')) as f:
 		long_description = '\n' + f.read()
 except FileNotFoundError:
 	long_description = DESCRIPTION
 
-about = {
-	'__version__': VERSION
-}
-
 setup(
 	name=NAME,
-	version=about['__version__'],
+	version=VERSION,
 	description=DESCRIPTION,
 	entry_points={
-		'console_scripts': ['djexp = djexpapp.djexp:main']
+		'console_scripts': ['djexp = djexp.djexp:main']
 	},
 	long_description=long_description,
 	long_description_content_type='text/markdown',

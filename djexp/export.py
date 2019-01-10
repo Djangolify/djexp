@@ -4,7 +4,7 @@ from re import sub, search
 from os import path, makedirs, listdir, getcwd
 
 from .meta.module import Module
-from djexpapp.normalizer.normalizers import normalize_root
+from .normalizer.normalizers import normalize_root
 
 import yaml
 
