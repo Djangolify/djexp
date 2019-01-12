@@ -1,4 +1,4 @@
-from .cli import cli_exec
+from djexp.cli import cli_exec
 
 
 def main():

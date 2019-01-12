@@ -1,6 +1,9 @@
-from re import sub
+import re
 
-from .django_types import (
+import django
+from django.db import models
+
+from djexp.normalizer.django_types import (
 	STR_TYPES,
 	TIME_TYPES,
 	BYTE_TYPES,
@@ -12,13 +15,17 @@ from .django_types import (
 	FLOAT64_TYPES
 )
 
-import django
-from django.db import models
-
 
 def normalize_root(root: str):
-	root = sub(r'[^\w.]{2,}', '/', root)
+	root = re.sub(r'[^\w.]{2,}', '/', root)
 	return root.rstrip('/')
+
+
+def module_to_path(path_str: str):
+	last = path_str.rfind('.')
+	if last is not -1:
+		path_str = path_str[:last]
+	return path_str.replace('.', '/')
 
 
 def normalize_type(data_type):

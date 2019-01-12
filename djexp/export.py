@@ -1,21 +1,19 @@
-import re
 import os
-import sys
 import json
 import yaml
 
-from .meta.module import Module
-from .normalizer.normalizers import normalize_root
+import django
+from django.apps import apps
 
-from .validators import is_valid_module, dir_is_omitted
+from djexp.cls import Class
+from djexp.exceptions import DjexpError
+from djexp.normalizer.normalizers import normalize_root
 
 OUTPUT_FILE = 'django-models'
 
 
-def path_to_module(path_str: str):
-	if path_str.endswith('.py'):
-		path_str = path_str[:len(path_str) - 3]
-	return re.sub(r'[^\w]+', '.', path_str).lstrip('/.')
+def to_classes(classes: []):
+	return [Class(cls) for cls in classes]
 
 
 def save_json(data: dict, target_path: str):
@@ -42,56 +40,31 @@ def save_dict(data: dict, root_path: str, file_format: str):
 	elif file_format is 'yml':
 		return save_yaml(data, target_path)
 	else:
-		raise ValueError('invalid serialization file type')
+		raise DjexpError('invalid serialization file type')
 
 
-def get_modules(root: str):
-	modules = []
-	root = normalize_root(root)
-	for f in os.listdir(root):
-		new_path = os.path.join(root, f)
-		if is_valid_module(new_path):
-			modules.append((path_to_module(new_path), new_path))
-		elif os.path.isdir(new_path) and not dir_is_omitted(new_path):
-			modules += get_modules(new_path)
-	return modules
+def compose_output_data(root_dir: str, classes: []):
+	if len(classes) > 0:
+		res_classes = [cls.dictionary for cls in classes if 'django.contrib' not in cls.path]
+		res_count = len(res_classes)
+		return ({
+			'root': root_dir,
+			'count': res_count,
+			'classes': res_classes
+		}, res_count)
+	print('Nothing to export.')
+	return None
 
 
-def prepare_modules(module_names: [], settings_module):
-	modules = []
-	for x in module_names:
-		try:
-			modules.append(Module('{}'.format(x[0]), settings_module))
-		except ModuleNotFoundError as _:
-			pass
-	return modules
-
-
-def compose_output_data(root_dir: str, modules: []):
-	final_modules = [module.dictionary for module in modules if len(module.classes) > 0]
-	return ({
-		'root': root_dir,
-		'count': len(final_modules),
-		'modules': final_modules
-	}, len(final_modules))
-
-
-def export(root_dir: str, settings_module, file_format: str):
-	sys.path.append(root_dir)
+def export(root_dir: str, file_format: str, settings_module=None):
 	try:
-		modules = prepare_modules(get_modules(root_dir), settings_module)
-	except Exception as exc:
-		raise Exception('Error occurred while getting modules\' information: {}'.format(exc))
-	if len(modules) > 0:
-		try:
-			out_data, classes_count = compose_output_data(os.path.abspath(root_dir), modules)
-		except Exception as exc:
-			print(exc)
-			raise Exception('Error occurred while composing output data: {}'.format(exc))
-		try:
-			saved_path = save_dict(out_data, os.getcwd(), file_format)
-		except Exception as exc:
-			raise Exception('Error occurred while json data: {}'.format(exc))
+		if settings_module is not None:
+			os.environ.setdefault('DJANGO_SETTINGS_MODULE', settings_module)
+			django.setup()
+		out_data, classes_count = compose_output_data(
+			os.path.abspath(root_dir), to_classes(apps.get_models())
+		)
+		saved_path = save_dict(out_data, os.getcwd(), file_format)
 		print('Exported {} classes, check out \'{}\' file.'.format(classes_count, saved_path))
-	else:
-		print('Nothing to export.')
+	except DjexpError as exc:
+		print('djexp: {}'.format(exc))

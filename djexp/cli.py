@@ -1,23 +1,23 @@
 import sys
 
-from .export import export
+from djexp.export import export
+from djexp.exceptions import DjexpCliError
+from djexp import NAME, VERSION, DESCRIPTION
 
-NAME = 'djexp'
-VERSION = '0.0.1-alpha'
-DESCRIPTION = 'Python3 application which exports Django models to json or yaml.'
+
+def get_param(args, prefix, name):
+	try:
+		idx = args.index(prefix)
+		return args[idx + 1]
+	except ValueError as _:
+		raise DjexpCliError('{} parameter is required'.format(name))
 
 
 def parse_args(argv):
 	if len(argv) > 6:
-		raise ValueError('too many arguments were specified')
-	try:
-		root_idx = argv.index('-r')
-	except ValueError as _:
-		raise ValueError('root directory is required')
-	try:
-		settings_idx = argv.index('-s')
-	except ValueError as _:
-		raise ValueError('settings module is required')
+		raise DjexpCliError('too many arguments were specified')
+	root = get_param(argv, '-r', 'root directory')
+	settings = get_param(argv, '-s', 'settings module')
 	try:
 		argv.index('--yml')
 		file_format = 'yml'
@@ -29,17 +29,18 @@ def parse_args(argv):
 				print('Warning: unsupported file format, serializing to json by default')
 		file_format = 'json'
 	return {
-		'root': argv[root_idx + 1],
-		'settings': argv[settings_idx + 1],
-		'file_format': file_format.strip('-')
+		'root_dir': root,
+		'file_format': file_format.strip('-'),
+		'settings_module': settings,
 	}
 
 
 def print_help():
 	print("""Help:
-	-h     print help
-	-r     specify project root
-	-s     specify an explicit name of settings module""")
+	-h             print help
+	-r             specify project root
+	-s             specify an explicit name of settings module
+	--json, --yml  export file format (default is json)""")
 
 
 def print_info():
@@ -62,11 +63,8 @@ def cli_exec():
 	else:
 		try:
 			print('Exporting...')
-			args = parse_args(sys.argv)
-			export(args['root'], args['settings'], args['file_format'])
-		except ValueError as val_err:
+			export(**parse_args(sys.argv))
+		except DjexpCliError as val_err:
 			print('{}: {}, try \'-h\' for help'.format(NAME, val_err))
-		except Exception as exc:
-			print('An error occurred while exporting: {}'.format(exc))
 		return
 	print('{}: invalid arguments were specified, try \'-h\' for help'.format(NAME))

@@ -1,6 +1,7 @@
 from unittest import TestCase
 
-from djexp.export import normalize_root, path_to_module
+from djexp.export import normalize_root
+from djexp.normalizer.normalizers import module_to_path
 
 
 class TestExport(TestCase):
@@ -16,9 +17,7 @@ class TestExport(TestCase):
 
 	def test_path_to_module(self):
 		data = [
-			('./root/folder/module.py', 'root.folder.module'),
-			('root/folder/module.py', 'root.folder.module'),
-			('.//root////////folder//////module.py', 'root.folder.module')
+			('root.folder.module_name', 'root/folder'),
 		]
 		for d in data:
-			self.assertEqual(path_to_module(d[0]), d[1])
+			self.assertEqual(module_to_path(d[0]), d[1])

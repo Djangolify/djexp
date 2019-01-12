@@ -6,15 +6,14 @@ import os
 
 from setuptools import setup, find_packages
 
-NAME = 'djexp'
-DESCRIPTION = 'Python3 application which exports Django models to json or yaml'
+from djexp import NAME, DESCRIPTION, VERSION
+
 URL = 'https://github.com/Djangolify/djexp'
 EMAIL = 'yuralisovskiy98@gmail.com'
 AUTHOR = 'Yuriy Lisovskiy'
 REQUIRES_PYTHON = '>=3.6.0'
-VERSION = '0.0.1-alpha'
 
-REQUIRED = ['Django>=2.1.5', 'pyyaml>=4.2b4']
+REQUIRED = ['django>=1.7', 'pyyaml>=4.2b4']
 
 try:
 	with io.open(os.path.join(os.path.abspath(os.path.dirname(__file__)), 'README.md')) as f:
@@ -27,7 +26,7 @@ setup(
 	version=VERSION,
 	description=DESCRIPTION,
 	entry_points={
-		'console_scripts': ['djexp = djexp.djexp:main']
+		'console_scripts': ['{} = {}.{}:main'.format(NAME, NAME, NAME)]
 	},
 	long_description=long_description,
 	long_description_content_type='text/markdown',
