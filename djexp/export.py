@@ -2,7 +2,6 @@ import os
 import json
 import yaml
 
-import django
 from django.apps import apps
 
 from djexp.cls import Class
@@ -45,7 +44,7 @@ def save_dict(data: dict, root_path: str, file_format: str):
 
 def compose_output_data(root_dir: str, classes: []):
 	if len(classes) > 0:
-		res_classes = [cls.dictionary for cls in classes if 'django.contrib' not in cls.path]
+		res_classes = [cls.dictionary for cls in classes if 'django/contrib' not in cls.path]
 		res_count = len(res_classes)
 		return ({
 			'root': root_dir,
@@ -56,11 +55,8 @@ def compose_output_data(root_dir: str, classes: []):
 	return None
 
 
-def export(root_dir: str, file_format: str, settings_module=None):
+def export(root_dir: str, file_format: str):
 	try:
-		if settings_module is not None:
-			os.environ.setdefault('DJANGO_SETTINGS_MODULE', settings_module)
-			django.setup()
 		out_data, classes_count = compose_output_data(
 			os.path.abspath(root_dir), to_classes(apps.get_models())
 		)

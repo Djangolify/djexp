@@ -1,4 +1,7 @@
+import os
 import sys
+
+import django
 
 from djexp.export import export
 from djexp.exceptions import DjexpCliError
@@ -16,7 +19,7 @@ def get_param(args, prefix, name):
 def parse_args(argv):
 	if len(argv) > 6:
 		raise DjexpCliError('too many arguments were specified')
-	root = get_param(argv, '-r', 'root directory')
+	root = get_param(argv, '-r', 'project root directory')
 	settings = get_param(argv, '-s', 'settings module')
 	try:
 		argv.index('--yml')
@@ -28,18 +31,17 @@ def parse_args(argv):
 			if len(argv) > 5:
 				print('Warning: unsupported file format, serializing to json by default')
 		file_format = 'json'
-	return {
+	return ({
 		'root_dir': root,
-		'file_format': file_format.strip('-'),
-		'settings_module': settings,
-	}
+		'file_format': file_format.strip('-')
+	}, settings)
 
 
 def print_help():
 	print("""Help:
 	-h             print help
-	-r             specify project root
-	-s             specify an explicit name of settings module
+	-r             project root directory
+	-s             an explicit name of settings module
 	--json, --yml  export file format (default is json)""")
 
 
@@ -63,7 +65,11 @@ def cli_exec():
 	else:
 		try:
 			print('Exporting...')
-			export(**parse_args(sys.argv))
+			args, settings = parse_args(sys.argv)
+			sys.path.append(args['root_dir'])
+			os.environ.setdefault('DJANGO_SETTINGS_MODULE', settings)
+			django.setup()
+			export(**args)
 		except DjexpCliError as val_err:
 			print('{}: {}, try \'-h\' for help'.format(NAME, val_err))
 		return
