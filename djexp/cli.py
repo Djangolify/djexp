@@ -3,9 +3,13 @@ import sys
 
 import django
 
+from djexp import (
+	__version__,
+	__app_name__,
+	__description__
+)
 from djexp.export import export
 from djexp.exceptions import DjexpCliError
-from djexp import NAME, VERSION, DESCRIPTION
 
 
 def get_param(args, prefix, name):
@@ -46,7 +50,7 @@ def print_help():
 
 
 def print_info():
-	print('{}, version {}\n{}'.format(NAME, VERSION, DESCRIPTION))
+	print('{}, version {}\n{}'.format(__app_name__, __version__, __description__))
 
 
 def cli_exec():
@@ -71,6 +75,6 @@ def cli_exec():
 			django.setup()
 			export(**args)
 		except DjexpCliError as val_err:
-			print('{}: {}, try \'-h\' for help'.format(NAME, val_err))
+			print('{}: {}, try \'-h\' for help'.format(__app_name__, val_err))
 		return
-	print('{}: invalid arguments were specified, try \'-h\' for help'.format(NAME))
+	print('{}: invalid arguments were specified, try \'-h\' for help'.format(__app_name__))

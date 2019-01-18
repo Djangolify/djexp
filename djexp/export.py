@@ -4,9 +4,10 @@ import yaml
 
 from django.apps import apps
 
+from djexp import __app_name__
 from djexp.cls import Class
 from djexp.exceptions import DjexpError
-from djexp.normalizer.normalizers import normalize_root
+from djexp.normalizers import normalize_root
 
 OUTPUT_FILE = 'django-models'
 
@@ -29,7 +30,7 @@ def save_yaml(data: dict, target_path: str):
 		return target_path
 
 
-def save_dict(data: dict, root_path: str, file_format: str):
+def save_data(data: dict, root_path: str, file_format: str):
 	root_path = normalize_root(root_path)
 	if not os.path.exists(root_path):
 		os.makedirs(root_path)
@@ -45,12 +46,10 @@ def save_dict(data: dict, root_path: str, file_format: str):
 def compose_output_data(root_dir: str, classes: []):
 	if len(classes) > 0:
 		res_classes = [cls.dictionary for cls in classes if 'django/contrib' not in cls.path]
-		res_count = len(res_classes)
 		return ({
 			'root': root_dir,
-			'count': res_count,
 			'classes': res_classes
-		}, res_count)
+		}, len(res_classes))
 	print('Nothing to export.')
 	return None
 
@@ -60,7 +59,7 @@ def export(root_dir: str, file_format: str):
 		out_data, classes_count = compose_output_data(
 			os.path.abspath(root_dir), to_classes(apps.get_models())
 		)
-		saved_path = save_dict(out_data, os.getcwd(), file_format)
+		saved_path = save_data(out_data, os.getcwd(), file_format)
 		print('Exported {} classes, check out \'{}\' file.'.format(classes_count, saved_path))
 	except DjexpError as exc:
-		print('djexp: {}'.format(exc))
+		print('{}: {}'.format(__app_name__, exc))

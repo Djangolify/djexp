@@ -1,21 +1,19 @@
 import inspect
 
-from djexp.exceptions import DjexpError
-from djexp.normalizer.normalizers import (
-	normalize_type,
+from djexp.types import TYPES
+from djexp.normalizers import (
 	module_to_path,
 	normalize_relations
 )
+from djexp.exceptions import DjexpError
 
 
-class Class(object):
+class Class:
 
-	def __init__(self, cls: object):
+	def __init__(self, cls):
 		if not inspect.isclass(cls):
 			raise DjexpError('object \'{}\' is not a class'.format(cls))
 		self.__class = cls
-		self.__fields_got = False
-		self.__static_fields = []
 		self.__path = module_to_path(inspect.getmodule(self.__class).__name__)
 
 	@property
@@ -32,19 +30,20 @@ class Class(object):
 
 	@property
 	def static_fields(self):
-		if not self.__fields_got:
-			for field in self.__class._meta.fields:
-				normalized_type = normalize_type(type(field))
+		static_fields = []
+		for field in self.__class._meta.fields:
+			if not type(field).__name__ in TYPES.keys():
+				normalized_type = normalize_relations(field)
 				if normalized_type is None:
-					normalized_type = normalize_relations(field)
-					if normalized_type is None:
-						continue
-				self.__static_fields.append({
-					'unique': field.unique,
-					'type': normalized_type,
-					'name': str(field).split('.')[-1]
-				})
-		return self.__static_fields
+					continue
+			else:
+				normalized_type = TYPES[type(field).__name__]
+			static_fields.append({
+				'unique': field.unique,
+				'type': normalized_type,
+				'name': str(field).split('.')[-1]
+			})
+		return static_fields
 
 	@property
 	def dictionary(self):

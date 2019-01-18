@@ -1,7 +1,7 @@
 from unittest import TestCase
 
 from djexp.export import normalize_root
-from djexp.normalizer.normalizers import module_to_path
+from djexp.normalizers import module_to_path
 
 
 class TestExport(TestCase):

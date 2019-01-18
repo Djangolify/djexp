@@ -1,5 +1,5 @@
-NAME = 'djexp'
+__app_name__ = 'djexp'
 
-VERSION = '0.0.1-alpha'
+__version__ = '0.0.1-alpha'
 
-DESCRIPTION = 'Python3 application which exports Django models to json or yaml.'
+__description__ = 'Python3 application which exports Django models to json or yaml'
