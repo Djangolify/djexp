@@ -1,2 +1,4 @@
 language: python
-script: make test-verbose
+script: 
+- ls
+- make test-verbose
