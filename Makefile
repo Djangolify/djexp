@@ -1,16 +1,24 @@
 all: clean test install
 
-install:
-	python setup.py install
+.PHONY: test test-verbose clean pre_build build install deploy
 
 test:
 	python -m unittest
 
+test-verbose:
+	python -m unittest -v
+
 clean:
 	rm -rf build/ djexp.egg-info/ dist/
 
-deploy:
-	python3 -m pip install --user --upgrade setuptools wheel
-	python3 setup.py sdist bdist_wheel
-	python3 -m pip install --user --upgrade twine
+pre_build:
+	pip3 install --user --upgrade setuptools wheel twine
+
+build: pre_build
+	python setup.py sdist bdist_wheel
+
+install: pre_build
+	python setup.py install
+
+deploy: build
 	twine upload dist/*
