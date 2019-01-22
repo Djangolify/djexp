@@ -20,5 +20,5 @@ build: pre_build
 install: pre_build
 	python setup.py install
 
-deploy: build dist
+deploy: build
 	twine upload dist/*
