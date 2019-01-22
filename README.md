@@ -9,8 +9,7 @@ $ pip install djexp
 ```
 
 ### Requirements
-- Django>=2.1.5
-> I am not sure if it works with earlier Django versions.
+- Django>=1.7
 - PyYAML==3.13
 
 ### Example
@@ -20,42 +19,18 @@ $ djexp -r ./ -s ProjectName.settings --json
 ```
 
 ##### Using in Django project
-Example structure:
-```
-ProjectName/
-    ...
-    manage.py
-    core/
-        __init__.py
-        ...
-        models.py
-        management/
-            __init__.py
-            commands/
-                __init__.py
-                export_models.py
-        views.py
-        ...
-    ...
-```
-Implement command, `export_models.py`:
+Update `settings.py`:
 ```python
-from ProjectName.settings import BASE_DIR
-from djexp.task import export_django_models
-from django.core.management.base import BaseCommand
+...
 
-
-class Command(BaseCommand):
-
-    def handle(self, **options):
-        export_django_models(
-            root=BASE_DIR,
-            settings_module='ProjectName.settings',
-            file_format='yml'
-        )
+INSTALLED_APPS = [
+	...
+	'djexp.app'
+]
+...
 ```
 
-Run created management command:
+Run the command from `djexp` application:
 ```bash
 $ python manage.py export_models
 ```

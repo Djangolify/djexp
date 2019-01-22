@@ -1,2 +1,2 @@
-django>=2.1.5
+django>=1.7
 pyyaml>=4.2b4

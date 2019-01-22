@@ -1,72 +1,51 @@
+import os
 import sys
+import argparse
 
-from .export import export
+import django
 
-NAME = 'djexp'
-VERSION = '0.0.1-alpha'
-DESCRIPTION = 'Python3 application which exports Django models to json or yaml.'
-
-
-def parse_args(argv):
-	if len(argv) > 6:
-		raise ValueError('too many arguments were specified')
-	try:
-		root_idx = argv.index('-r')
-	except ValueError as _:
-		raise ValueError('root directory is required')
-	try:
-		settings_idx = argv.index('-s')
-	except ValueError as _:
-		raise ValueError('settings module is required')
-	try:
-		argv.index('--yml')
-		file_format = 'yml'
-	except ValueError as _:
-		try:
-			argv.index('--json')
-		except ValueError as _:
-			if len(argv) > 5:
-				print('Warning: unsupported file format, serializing to json by default')
-		file_format = 'json'
-	return {
-		'root': argv[root_idx + 1],
-		'settings': argv[settings_idx + 1],
-		'file_format': file_format.strip('-')
-	}
+from djexp import (
+	__version__,
+	__app_name__,
+	__description__
+)
+from djexp.export import export
+from djexp.exceptions import DjexpCliError
 
 
-def print_help():
-	print("""Help:
-	-h     print help
-	-r     specify project root
-	-s     specify an explicit name of settings module""")
+def arg_parser():
+	parser = argparse.ArgumentParser()
+	parser.add_argument('-r', '--root', help='project root directory', default='./')
+	parser.add_argument('-s', '--settings', help='project settings module')
+	parser.add_argument('-v', '--version', action='store_true', default=False, help='check app version')
+	parser.add_argument('--yml', '--yaml', action='store_true', default=False, help='output to yaml file format')
+	parser.add_argument('--json', action='store_true', default=True, help='output to json file format')
+	return parser
 
 
-def print_info():
-	print('{}, version {}\n{}'.format(NAME, VERSION, DESCRIPTION))
+def exec_export(args, file_format):
+	print('Exporting...')
+	sys.path.append(args.root)
+	os.environ.setdefault('DJANGO_SETTINGS_MODULE', args.settings)
+	django.setup()
+	export(**{
+		'root_dir': args.root,
+		'file_format': file_format
+	})
 
 
 def cli_exec():
-	if len(sys.argv) == 1:
-		print_info()
-		print()
-		print_help()
+	args = arg_parser().parse_args()
+	if args.version:
+		print('{}, version {}\n{}'.format(__app_name__, __version__, __description__))
 		return
-	elif len(sys.argv) == 2:
-		try:
-			sys.argv.index('-h')
-			print_help()
-			return
-		except ValueError as _:
-			pass
-	else:
-		try:
-			print('Exporting...')
-			args = parse_args(sys.argv)
-			export(args['root'], args['settings'], args['file_format'])
-		except ValueError as val_err:
-			print('{}: {}, try \'-h\' for help'.format(NAME, val_err))
-		except Exception as exc:
-			print('An error occurred while exporting: {}'.format(exc))
+	if args.settings is None:
+		print('{}: need to setup settings module\nUse -h, --help for usage info'.format(__app_name__))
 		return
-	print('{}: invalid arguments were specified, try \'-h\' for help'.format(NAME))
+	file_format = 'json'
+	if args.yml:
+		file_format = 'yml'
+	try:
+		exec_export(args, file_format)
+	except DjexpCliError as val_err:
+		print('{}: {}, try \'-h\' for help'.format(__app_name__, val_err))
