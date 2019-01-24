@@ -16,6 +16,10 @@ $ pip install djexp
 ### Example
 ##### Using as command line application:
 ```bash
+# read usage
+$ djexp -h
+
+# export models
 $ djexp -r ./ -s ProjectName.settings --json
 ```
 
