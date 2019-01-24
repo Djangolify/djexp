@@ -4,10 +4,25 @@ Application which exports Django models to json or yaml file format.
 > Use this module on your own risk because of non-stable version.
 
 ### Installation
+##### Using pip:
 ```bash
 $ pip install djexp
 ```
 > This module has not been deployed yet.
+
+##### Manual
+```bash
+# create and activate virtual environment (optional)
+$ virtualenv -p python3 path/to/venv
+$ source path/to/venv/bin/activate
+
+# clone the repository
+$ git clone https://github.com/Djangolify/djexp.git
+
+# install djexp
+$ cd djexp/
+$ python setup.py install
+```
 
 ### Requirements
 - Django>=1.7
