@@ -1,6 +1,8 @@
 import os
 import json
 import yaml
+from dicttoxml import dicttoxml
+from xml.dom.minidom import parseString
 
 from django.apps import apps
 from django.conf import settings
@@ -16,7 +18,7 @@ def to_models(classes: []):
 	return [Model(cls) for cls in classes]
 
 
-def write_to_file(data: dict, dump, target_path: str, ext: str):
+def _save(data: dict, dump, target_path: str, ext: str):
 	target_path = '{}.{}'.format(target_path, ext)
 	with open(target_path, 'w') as f:
 		dump(data, f)
@@ -24,7 +26,7 @@ def write_to_file(data: dict, dump, target_path: str, ext: str):
 
 
 def save_json(data: dict, target_path: str):
-	return write_to_file(
+	return _save(
 		data,
 		lambda d, f: json.dump(data, f, ensure_ascii=False, indent=2, sort_keys=True),
 		target_path,
@@ -33,12 +35,14 @@ def save_json(data: dict, target_path: str):
 
 
 def save_yaml(data: dict, target_path: str):
-	return write_to_file(
-		data,
-		lambda d, f: yaml.dump(data, f),
-		target_path,
-		'yml'
-	)
+	return _save(data, lambda d, f: yaml.dump(data, f), target_path, 'yml')
+
+
+def save_xml(data: dict, target_path: str):
+	def dump(d, f):
+		xml = dicttoxml(d, custom_root=d.get('root').split('/')[-1], attr_type=False)
+		f.write(parseString(xml).toprettyxml(encoding='utf-8').decode('utf-8'))
+	return _save(data, dump, target_path, 'xml')
 
 
 def save_data(data: dict, root_path: str, file_format: str):
@@ -50,8 +54,10 @@ def save_data(data: dict, root_path: str, file_format: str):
 		return save_json(data, target_path)
 	elif file_format is 'yml':
 		return save_yaml(data, target_path)
+	elif file_format is 'xml':
+		return save_xml(data, target_path)
 	else:
-		raise DjexpError('invalid serialization file type')
+		raise DjexpError('\'{}\' format is not supported'.format(file_format))
 
 
 def compose_output_data(root_dir: str, classes: []):
@@ -79,9 +85,6 @@ def export_models(root_dir: str, ignored):
 
 def export(root_dir: str, file_format: str):
 	DJEXP_IGNORE = getattr(settings, 'DJEXP_IGNORE', IGNORED_DEFAULT)
-
-	print(DJEXP_IGNORE)
-
 	if 'MODELS' not in DJEXP_IGNORE:
 		DJEXP_IGNORE['MODELS'] = []
 	try:

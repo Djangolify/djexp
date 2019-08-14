@@ -17,7 +17,15 @@ EMAIL = 'yuralisovskiy98@gmail.com'
 AUTHOR = 'Yuriy Lisovskiy'
 REQUIRES_PYTHON = '>=3.6.0'
 
-REQUIRED = ['django>=1.7', 'pyyaml>=4.2b4']
+REQUIRED = []
+
+try:
+	with io.open('./requirements.txt') as f:
+		REQUIRED = list(filter(None, f.read().split('\n')))
+except FileNotFoundError:
+	pass
+
+print(REQUIRED)
 
 try:
 	with io.open(os.path.join(os.path.abspath(os.path.dirname(__file__)), 'README.md')) as f:

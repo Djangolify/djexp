@@ -1,7 +1,7 @@
 ## djexp - Django Export
 
-Application which exports Django models and views' info
-to json or yaml file format.
+Application which exports Django models info to json, yaml and
+xml file formats.
 > WARNING: use this module on your own risk because of non-stable
 > version.
 
@@ -29,10 +29,13 @@ $ python setup.py install
 ### Requirements
 - Django>=1.7
 - PyYAML==4.2b4
+- dicttoxml>=1.7.4
 
 ### Example
 ##### Djexp settings
 ```python
+...
+
 # setup ignorable models
 DJEXP_IGNORE = {
     'MODELS': [
@@ -40,6 +43,7 @@ DJEXP_IGNORE = {
         'django.contrib.contenttypes.models.ContentType'
     ]
 }
+...
 ```
 By default djexp ignores django's built-in models:
 * `django.contrib.admin.models.LogEntry`
@@ -50,9 +54,25 @@ By default djexp ignores django's built-in models:
 
 Disable ignoring models:
 ```python
+...
+
 DJEXP_IGNORE = {
     'MODELS': []
 }
+...
+```
+
+The default export format is `json`. But `djexp` allows to set formats via
+`DJEXP_FORMATS` project setting: 
+```python
+...
+
+# setup export formats
+DJEXP_FORMATS = [
+    'yml',
+    'xml'
+]
+...
 ```
 
 ##### Using as command line application:
@@ -63,6 +83,9 @@ $ djexp -h
 # export
 $ djexp -r ./ -s ProjectName.settings --json
 ```
+
+If you run the command without specifying format(s), djexp will use
+them from `DJEXP_FORMATS` setting.
 
 ##### Using in Django project
 Update `settings.py`:
@@ -81,8 +104,9 @@ Run the command from `djexp` application:
 ```bash
 $ python manage.py project_info
 ```
-This will create `django-project.json` file with models
-and views' information in project root directory.
+This will create `django-project.json` (file format may vary
+due to your choice) file with models' information in project
+root directory.
 
 ### Authors
 * [Orest Hopiak](https://github.com/OHopiak)
