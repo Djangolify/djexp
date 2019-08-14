@@ -37,3 +37,9 @@ TYPES = {
 	models.DecimalField.__name__: 'float64',
 	models.FloatField.__name__: 'float64'
 }
+
+RELATION_TYPES = {
+	models.ForeignKey: 'ForeignKey({})',
+	models.ManyToManyField: 'ManyToManyField({})',
+	models.OneToOneField: 'OneToOneField({})'
+}

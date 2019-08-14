@@ -1,19 +1,19 @@
 from unittest import TestCase
 
-from djexp.cls import Class
+from djexp.model import Model
 from tests.test_meta.demo_module import TestClass, AnotherTestClass
 
 
 class TestCls(TestCase):
 
 	def setUp(self):
-		self.cls = Class(TestClass)
+		self.cls = Model(TestClass)
 
 	def test_name(self):
 		self.assertEqual(self.cls.name, 'TestClass')
 
 	def test_bases(self):
-		cls = Class(AnotherTestClass)
+		cls = Model(AnotherTestClass)
 		self.assertTrue(str in cls.bases and TestClass in cls.bases)
 
 

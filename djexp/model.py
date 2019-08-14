@@ -1,20 +1,20 @@
-import inspect
+from inspect import isclass
 
 from djexp.types import TYPES
-from djexp.normalizers import (
-	module_to_path,
+from djexp.utils import (
+	get_module_path,
 	normalize_relations
 )
 from djexp.exceptions import DjexpError
 
 
-class Class:
+class Model:
 
 	def __init__(self, cls):
-		if not inspect.isclass(cls):
+		if not isclass(cls):
 			raise DjexpError('object \'{}\' is not a class'.format(cls))
 		self.__class = cls
-		self.__path = module_to_path(inspect.getmodule(self.__class).__name__)
+		self.__path = get_module_path(self.__class.__module__) + '.py'
 
 	@property
 	def name(self):

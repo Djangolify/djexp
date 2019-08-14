@@ -1,14 +1,16 @@
 ## djexp - Django Export
 
-Application which exports Django models to json or yaml file format.
-> Use this module on your own risk because of non-stable version.
+Application which exports Django models and views' info
+to json or yaml file format.
+> WARNING: use this module on your own risk because of non-stable
+> version.
 
 ### Installation
 ##### Using pip:
 ```bash
 $ pip install djexp
 ```
-> This module has not been deployed yet.
+> WARNING: this module has not been deployed yet.
 
 ##### Manual
 ```bash
@@ -29,12 +31,36 @@ $ python setup.py install
 - PyYAML==4.2b4
 
 ### Example
+##### Djexp settings
+```python
+# setup ignorable models
+DJEXP_IGNORE = {
+    'MODELS': [
+        'django.contrib.admin.models.LogEntry',
+        'django.contrib.contenttypes.models.ContentType'
+    ]
+}
+```
+By default djexp ignores django's built-in models:
+* `django.contrib.admin.models.LogEntry`
+* `django.contrib.auth.models.Permission`
+* `django.contrib.auth.models.Group`
+* `django.contrib.contenttypes.models.ContentType`
+* `django.contrib.sessions.models.Session`
+
+Disable ignoring models:
+```python
+DJEXP_IGNORE = {
+    'MODELS': []
+}
+```
+
 ##### Using as command line application:
 ```bash
 # read usage
 $ djexp -h
 
-# export models
+# export
 $ djexp -r ./ -s ProjectName.settings --json
 ```
 
@@ -43,6 +69,7 @@ Update `settings.py`:
 ```python
 ...
 
+# add djexp to installed apps
 INSTALLED_APPS = [
     ...
     'djexp.app'
@@ -52,12 +79,16 @@ INSTALLED_APPS = [
 
 Run the command from `djexp` application:
 ```bash
-$ python manage.py export_models
+$ python manage.py project_info
 ```
+This will create `django-project.json` file with models
+and views' information in project root directory.
 
 ### Authors
 * [Orest Hopiak](https://github.com/OHopiak)
 * [Yuriy Lisovskiy](https://github.com/YuriyLisovskiy)
 
 ### License
-The project is licensed under the terms of the [GNU General Public License v3.0](https://opensource.org/licenses/GPL-3.0), see the [LICENSE](LICENSE) file for more information.
+The project is licensed under the terms of the
+[GNU General Public License v3.0](https://opensource.org/licenses/GPL-3.0),
+see the [LICENSE](LICENSE) file for more information.
